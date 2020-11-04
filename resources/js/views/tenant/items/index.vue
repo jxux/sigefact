@@ -12,7 +12,6 @@
                         <div class="dropdown-menu" role="menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 42px, 0px);">
                             <a class="dropdown-item text-1" href="#" @click.prevent="clickExport()">Listado</a>
                             <a class="dropdown-item text-1" href="#" @click.prevent="clickExportWp()">Woocommerce</a>
-                            <a class="dropdown-item text-1" href="#" @click.prevent="clickExportBarcode()">Etiquetas</a>
                         </div>
                     </div>
                     <div class="btn-group flex-wrap">
@@ -39,8 +38,8 @@
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Cód. SUNAT</th>
-                        <th  class="text-left">Stock</th>
-                        <th  class="text-right">P.Unitario (Venta)</th>
+                        <th class="text-left">Stock</th>
+                        <th class="text-right">P.Unitario (Venta)</th>
                         <th v-if="typeUser != 'seller'" class="text-right">P.Unitario (Compra)</th>
                         <th class="text-center">Tiene Igv (Venta)</th>
                         <th class="text-center">Tiene Igv (Compra)</th>
@@ -85,8 +84,6 @@
 
                                 <button type="button" class="btn waves-effect waves-light btn-xs btn-primary" @click.prevent="clickBarcode(row)">Cod. Barras</button>
 
-                                <button type="button" class="btn waves-effect waves-light btn-xs btn-primary" @click.prevent="clickPrintBarcode(row)">Etiquetas</button>
-
                             </template>
                         </td>
                     </tr>
@@ -99,7 +96,6 @@
             <items-import :showDialog.sync="showImportDialog"></items-import>
             <items-export :showDialog.sync="showExportDialog"></items-export>
             <items-export-wp :showDialog.sync="showExportWpDialog"></items-export-wp>
-            <items-export-barcode :showDialog.sync="showExportBarcodeDialog"></items-export-barcode>
 
             <warehouses-detail
                 :showDialog.sync="showWarehousesDetail"
@@ -119,21 +115,19 @@
     import ItemsImportListPrice from './partials/import_list_price.vue'
     import ItemsExport from './partials/export.vue'
     import ItemsExportWp from './partials/export_wp.vue'
-    import ItemsExportBarcode from './partials/export_barcode.vue'
     import DataTable from '../../../components/DataTable.vue'
     import {deletable} from '../../../mixins/deletable'
 
     export default {
         props:['typeUser'],
         mixins: [deletable],
-        components: {ItemsForm, ItemsImport, ItemsExport, ItemsExportWp, ItemsExportBarcode, DataTable, WarehousesDetail, ItemsImportListPrice},
+        components: {ItemsForm, ItemsImport, ItemsExport, ItemsExportWp, DataTable, WarehousesDetail, ItemsImportListPrice},
         data() {
             return {
                 showDialog: false,
                 showImportDialog: false,
                 showExportDialog: false,
                 showExportWpDialog: false,
-                showExportBarcodeDialog: false,
                 showImportListPriceDialog: false,
                 showWarehousesDetail: false,
                 resource: 'items',
@@ -181,9 +175,6 @@
             clickExportWp() {
                 this.showExportWpDialog = true
             },
-            clickExportBarcode() {
-                this.showExportBarcodeDialog = true
-            },
             clickImportListPrice() {
                 this.showImportListPriceDialog = true
             },
@@ -210,13 +201,6 @@
                 }
 
                 window.open(`/${this.resource}/barcode/${row.id}`)
-            },
-            clickPrintBarcode(row) {
-                if(!row.internal_id){
-                    return this.$message.error('Para generar el código de barras debe registrar el código interno.')
-                }
-
-                window.open(`/${this.resource}/export/barcode/print?id=${row.id}`)
             }
         }
     }

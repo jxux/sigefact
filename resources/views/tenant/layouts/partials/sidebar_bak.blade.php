@@ -29,7 +29,7 @@
                         ">
                         <a class="nav-link" href="#">
                             <i class="fas fa-receipt" aria-hidden="true"></i>
-                            <span>VENTAS</span>
+                            <span>Ventas</span>
                         </a>
                         <ul class="nav nav-children" style="">
                             @if(in_array('documents', $vc_modules))

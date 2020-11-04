@@ -14,7 +14,7 @@ class AddDataModuleForEstablishmentsUsers extends Migration
     public function up()
     {
         DB::table('modules')->insert([ 
-            ['id'=> 14, 'value' => 'establishments', 'description' => 'Usuarios/Locales & Series']
+            ['id'=> 14, 'value' => 'establishments', 'description' => 'Usuarios/Locales & Series'],
         ]);
     }
 

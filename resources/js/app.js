@@ -16,13 +16,6 @@ import lang from 'element-ui/lib/locale/lang/es'
 import locale from 'element-ui/lib/locale'
 locale.use(lang)
 
-ElementUI.Select.computed.readonly = function () {
-    const isIE = !this.$isServer && !Number.isNaN(Number(document.documentMode));
-    return !(this.filterable || this.multiple || !isIE) && !this.visible;
-};
-
-export default ElementUI;
-
 //Vue.use(ElementUI)
 Vue.use(ElementUI, {size: 'small'})
 Vue.prototype.$eventHub = new Vue()
@@ -38,6 +31,17 @@ Vue.component('tenant-dashboard-index', require('../../modules/Dashboard/Resourc
 
 Vue.component('x-graph', require('./components/graph/src/Graph.vue'));
 Vue.component('x-graph-line', require('./components/graph/src/GraphLine.vue'));
+
+Vue.component('tenant-revieweres-index', require('./views/tenant/reviewere/index.vue'));
+
+Vue.component('tenant-binnacles-index', require('./views/tenant/binnacles/index.vue'));
+Vue.component('tenant-binnacles-form', require('./views/tenant/binnacles/form.vue'));
+
+Vue.component('tenant-binnacles-category-index', require('./views/tenant/binnacles/catalogs/category/index.vue'));
+Vue.component('tenant-binnacles-category-form', require('./views/tenant/binnacles/catalogs/category/form.vue'));
+
+Vue.component('tenant-binnacles-service-index', require('./views/tenant/binnacles/catalogs/service/index.vue'));
+Vue.component('tenant-binnacles-service-form', require('./views/tenant/binnacles/catalogs/service/form.vue'));
 
 Vue.component('tenant-companies-form', require('./views/tenant/companies/form.vue'));
 Vue.component('tenant-companies-logo', require('./views/tenant/companies/logo.vue'));
@@ -203,13 +207,9 @@ Vue.component('tenant-contracts-index', require('@viewsModuleSale/contracts/inde
 Vue.component('tenant-contracts-form', require('@viewsModuleSale/contracts/form.vue'));
 Vue.component('tenant-production-orders-index', require('@viewsModuleSale/production_orders/index.vue'));
 
-//Item
-Vue.component('tenant-web-platforms-index', require('@viewsModuleItem/web-platforms/index.vue'));
-
 //technical Services
 Vue.component('tenant-technical-services-index', require('@viewsModuleSale/technical-services/index.vue'));
 Vue.component('tenant-user-commissions-index', require('@viewsModuleSale/user-commissions/index.vue'));
-
 //Purchase
 
 Vue.component('tenant-fixed-asset-items-index', require('@viewsModulePurchase/fixed_asset_items/index.vue'));

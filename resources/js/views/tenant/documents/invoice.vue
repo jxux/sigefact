@@ -226,7 +226,6 @@
                                                         <div class="form-group mb-2 mr-2">
                                                             <el-select v-model="row.payment_destination_id" filterable >
                                                                 <el-option v-for="option in payment_destinations" :key="option.id" :value="option.id" :label="option.description"></el-option>
-                                                                <!-- <el-option v-for="option in payment_destinations" @change="changeDestinationSale(index)" :key="option.id" :value="option.id" :label="option.description"></el-option> -->
                                                             </el-select>
                                                         </div>
                                                     </td>
@@ -465,7 +464,6 @@
                                                 <th width="30%" class="font-weight-bold">Descripción</th>
                                                 <th class="text-center font-weight-bold">Unidad</th>
                                                 <th class="text-right font-weight-bold">Cantidad</th>
-                                                <th class="text-right font-weight-bold">Valor Unitario</th>
                                                 <th class="text-right font-weight-bold">Precio Unitario</th>
                                                 <th class="text-right font-weight-bold">Subtotal</th>
                                                 <!--<th class="text-right font-weight-bold">Cargo</th>-->
@@ -482,7 +480,6 @@
                                                 <td class="text-right">{{row.quantity}}</td>
                                                 <!--<td class="text-right" v-else ><el-input-number :min="0.01" v-model="row.quantity"></el-input-number> </td> -->
 
-                                                <td class="text-right">{{currency_type.symbol}} {{getFormatUnitPriceRow(row.unit_value)}}</td>
                                                 <td class="text-right">{{currency_type.symbol}} {{getFormatUnitPriceRow(row.unit_price)}}</td>
                                                 <!--<td class="text-right" v-else ><el-input-number :min="0.01" v-model="row.unit_price"></el-input-number> </td> -->
 
@@ -496,7 +493,7 @@
 
                                                 </td>
                                             </tr>
-                                            <tr><td colspan="9"></td></tr>
+                                            <tr><td colspan="8"></td></tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -776,7 +773,6 @@ import moment from 'moment'
                     this.changeEstablishment()
                     this.changeDateOfIssue()
                     this.changeDocumentType()
-                    this.changeDestinationSale()
                     this.changeCurrencyType()
                 })
             this.loading_form = true
@@ -806,26 +802,6 @@ import moment from 'moment'
                 this.form.prepayments[index].total = (this.form.affectation_type_prepayment == 10) ? _.round(this.form.prepayments[index].amount * 1.18, 2) : this.form.prepayments[index].amount
 
                 this.changeTotalPrepayment()
-
-            },
-            changeDestinationSale() {
-
-                if(this.configuration.destination_sale && this.payment_destinations.length > 0) {
-
-                    let cash = _.find(this.payment_destinations, {id : 'cash'})
-
-                    if(cash){
-                    
-                        this.form.payments[0].payment_destination_id = cash.id
-                    
-                    }else{
-
-                        this.form.payment_destination_id = this.payment_destinations[0].id
-                        this.form.payments[0].payment_destination_id = this.payment_destinations[0].id
-                    }
-                    // console.log('log', this.form.payments[index].payment_destination_id)
-                    // console.log('aqui', this.payment_destinations[0].id)
-                }
 
             },
             changePaymentDestination(index){
@@ -1148,23 +1124,10 @@ import moment from 'moment'
                     date_of_payment:  moment().format('YYYY-MM-DD'),
                     payment_method_type_id: '01',
                     reference: null,
-                    payment_destination_id: this.getPaymentDestinationId(),
+                    payment_destination_id: null,
                     payment: 0,
+
                 });
-                
-            },
-            getPaymentDestinationId() {
-
-                if(this.configuration.destination_sale && this.payment_destinations.length > 0) {
-
-                    let cash = _.find(this.payment_destinations, {id : 'cash'})
-
-                    return (cash) ? cash.id : this.payment_destinations[0].id
-
-                }
-
-                return null
-
             },
             clickCancel(index) {
                 this.form.payments.splice(index, 1);
@@ -1300,8 +1263,6 @@ import moment from 'moment'
                 this.changeDocumentType()
                 this.changeDateOfIssue()
                 this.changeCurrencyType()
-                // this.changeDestinationSale()
-
             },
             async changeOperationType() {
                 this.form.customer_id = null
@@ -1378,14 +1339,14 @@ import moment from 'moment'
             async selectDefaultCustomer(){
 
                 if(this.establishment.customer_id){
-
+                     
                     await this.$http.get(`/${this.resource}/search/customer/${this.establishment.customer_id}`).then((response) => {
                         this.all_customers = response.data.customers
                     })
-
+                    
                     await this.filterCustomers()
                     this.form.customer_id = (this.customers.length > 0) ? this.establishment.customer_id : null
-
+                    
                 }
 
             },
@@ -1528,7 +1489,7 @@ import moment from 'moment'
                         row.total_igv = row.total_value - total_value_partial
                         row.total_base_igv = total_value_partial
                         total_value -= row.total_value
-
+                        
                     }
 
                 });

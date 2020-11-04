@@ -2,7 +2,51 @@
     <el-dialog :title="titleDialog" :visible="showDialog" @close="close" @open="create" @opened="opened" :close-on-click-modal="false" append-to-body>
         <form autocomplete="off" @submit.prevent="submit">
             <div class="form-body">
-                <div class="row">
+                <div class="row" v-if="type === 'clients'">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="control-label">Código <span class="text-danger">*</span></label>
+                            <el-input v-model="form.code" dusk="name"></el-input>
+                            <small class="form-control-feedback" v-if="errors.code" v-text="errors.code[0]"></small>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group" :class="{'has-danger': errors.identity_document_type_id}">
+                            <label class="control-label">Tipo Doc. Identidad <span class="text-danger">*</span></label>
+                            <el-select v-model="form.identity_document_type_id" filterable  popper-class="el-select-identity_document_type" dusk="identity_document_type_id" @change="changeIdentityDocType">
+                                <el-option v-for="option in identity_document_types" :key="option.id" :value="option.id" :label="option.description"></el-option>
+                            </el-select>
+                            <small class="form-control-feedback" v-if="errors.identity_document_type_id" v-text="errors.identity_document_type_id[0]"></small>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group" :class="{'has-danger': errors.number}">
+                            <label class="control-label">Número <span class="text-danger">*</span></label>
+
+                            <div v-if="api_service_token != false">
+                                <x-input-service :identity_document_type_id="form.identity_document_type_id" v-model="form.number" @search="searchNumber"></x-input-service>
+                            </div>
+                            <div v-else>
+                                <el-input v-model="form.number" :maxlength="maxLength" dusk="number">
+                                    <template v-if="form.identity_document_type_id === '6' || form.identity_document_type_id === '1'">
+                                        <el-button type="primary" slot="append" :loading="loading_search" icon="el-icon-search" @click.prevent="searchCustomer">
+                                            <template v-if="form.identity_document_type_id === '6'">
+                                                SUNAT
+                                            </template>
+                                            <template v-if="form.identity_document_type_id === '1'">
+                                                RENIEC
+                                            </template>
+                                        </el-button>
+                                    </template>
+                                </el-input>
+                            </div>
+
+                            <small class="form-control-feedback" v-if="errors.number" v-text="errors.number[0]"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" v-else>
                     <div class="col-md-6">
                         <div class="form-group" :class="{'has-danger': errors.identity_document_type_id}">
                             <label class="control-label">Tipo Doc. Identidad <span class="text-danger">*</span></label>
@@ -38,6 +82,9 @@
                         </div>
                     </div>
                 </div>
+
+
+                
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group" :class="{'has-danger': errors.name}">
@@ -325,6 +372,7 @@
                 this.errors = {}
                 this.form = {
                     id: null,
+                    code:null,
                     type: this.type,
                     identity_document_type_id: '6',
                     number: '',
@@ -383,6 +431,9 @@
                 }
                 if(this.type === 'suppliers') {
                     this.titleDialog = (this.recordId)? 'Editar Proveedor':'Nuevo Proveedor'
+                }
+                if(this.type === 'clients') {
+                    this.titleDialog = (this.recordId)? 'Editar Cliente':'Nuevo Cliente'
                 }
                 if (this.recordId) {
                     this.$http.get(`/${this.resource}/record/${this.recordId}`)
@@ -502,9 +553,9 @@
                 this.form.trade_name = (this.form.identity_document_type_id === '6')?data.nombre_o_razon_social:'';
                 this.form.location_id = data.ubigeo;
                 this.form.address = data.direccion;
-                this.form.department_id = (data.ubigeo) ? (data.ubigeo[0] != '-' ? data.ubigeo[0] : null) : null;
-                this.form.province_id = (data.ubigeo) ? (data.ubigeo[1] != '-' ? data.ubigeo[1] : null) : null;
-                this.form.district_id = (data.ubigeo) ? (data.ubigeo[2] != '-' ? data.ubigeo[2] : null) : null;
+                this.form.department_id = (data.ubigeo) ? data.ubigeo[0]:null;
+                this.form.province_id = (data.ubigeo) ? data.ubigeo[1]:null;
+                this.form.district_id = (data.ubigeo) ? data.ubigeo[2]:null;
                 this.form.condition = data.condicion;
                 this.form.state = data.estado;
 

@@ -19,6 +19,7 @@
                 <data-table :resource="resource+`/${this.type}`">
                     <tr slot="heading">
                         <th>#</th>
+                        <th v-if="type === 'clients'">Código</th>
                         <th>Nombre</th>
                         <th class="text-right">Tipo de documento</th>
                         <th class="text-right">Número</th>
@@ -26,6 +27,7 @@
                     <tr>
                     <tr slot-scope="{ index, row }" :class="{ disable_color : !row.enabled}">
                         <td>{{ index }}</td>
+                        <td v-if="type === 'clients'">{{ row.code }}</td>
                         <td>{{ row.name }}</td>
                         <td class="text-right">{{ row.document_type }}</td>
                         <td class="text-right">{{ row.number }}</td>
@@ -37,10 +39,8 @@
 
                             <template v-if="typeUser === 'admin'">
                                 <button type="button" class="btn waves-effect waves-light btn-xs btn-danger" @click.prevent="clickDelete(row.id)">Eliminar</button>
-
                                 <button type="button" class="btn waves-effect waves-light btn-xs btn-danger" @click.prevent="clickDisable(row.id)" v-if="row.enabled">Inhabilitar</button>
                                 <button type="button" class="btn waves-effect waves-light btn-xs btn-primary" @click.prevent="clickEnable(row.id)" v-else>Habilitar</button>
-
                             </template>
                         </td>
                     </tr>
@@ -84,7 +84,13 @@
             }
         },
         created() {
-            this.title = (this.type === 'customers')?'Clientes':'Proveedores'
+
+            if(this.type === 'suppliers')
+                this.title = 'Proveedores'
+            else 
+                this.title = 'Clientes'
+
+            // this.title = (this.type === 'customers'||'clients')?'Clientes':'Proveedores'
         },
         methods: {
             clickCreate(recordId = null) {
